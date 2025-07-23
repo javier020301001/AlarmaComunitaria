@@ -2,330 +2,223 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Alarma Comunitaria</title>
+  <title>Alarma Comunitaria – Monitor</title>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+  <!-- ===========  ESTILOS  =========== -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #fafafa;
-      max-width: 800px;
-      margin: 0 auto;
+    /* ---------- Layout general ---------- */
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      margin:0; padding:0;
+      background:#fafafa;
+      display:flex; flex-direction:column;
+      min-height:100vh;
     }
-    h1 {
-      color: #333;
-      text-align: center;
+
+    /* ---------- Texto de estado ---------- */
+    #estadoTexto{
+      padding:20px; text-align:center;
+      font-size:1.4rem;
+      background:#333; color:#fff;
     }
-    #status {
-      margin-bottom: 20px;
+
+    /* ---------- Stream de cámara ---------- */
+    #videoCamara{
+      display:none;                 /* se muestra cuando la cámara está operativa  */
+      margin:20px auto;
+      max-width:640px; width:100%;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #4285f4;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      margin-top: 10px;
+    #videoCamara img{
+      width:100%;
+      border-radius:8px;
+      box-shadow:0 0 10px rgba(0,0,0,.3);
     }
-    button:hover {
-      background: #3367d6;
+
+    /* ---------- BARRA DE ALERTA FIJA ABAJO ---------- */
+    #barraAlerta{
+      position:fixed; left:0; right:0; bottom:0;
+      background:#b00020; color:#fff;
+      padding:14px 18px;
+      font-weight:bold; font-size:1.05rem;
+      cursor:pointer; user-select:none;
+      box-shadow:0 -2px 8px rgba(0,0,0,.4);
+
+      transition:max-height .3s ease, padding-bottom .3s ease;
+      overflow:hidden;
+      max-height:60px;      /* altura compacta */
+      display:none;         /* se mostrará al recibir alerta */
     }
-    #camaraContenedor {
-      margin-top: 20px;
-      text-align: center;
-      display: none;
+    #barraAlerta.expandida{
+      max-height:280px;     /* espacio suficiente para texto + video */
+      padding-bottom:18px;
     }
-    #camaraStream {
-      max-width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      display: block;
-      margin: 0 auto;
+    #barraAlerta::after{
+      content:'⬆'; float:right; margin-left:12px;
+      font-size:1.3rem;
     }
-    .alert-success {
-      padding: 15px;
-      border: 1px solid #4caf50;
-      background: #e8f5e9;
-      border-radius: 4px;
-      margin-bottom: 20px;
+    #barraAlerta.expandida::after{ content:'⬇'; }
+
+    /* Contenedor flex para info + video  */
+    #contenidoAlerta{
+      margin-top:10px;
+      display:none;
+      flex-wrap:wrap; gap:15px;
     }
-    .alert-error {
-      padding: 15px;
-      border: 1px solid #f44336;
-      background: #ffebee;
-      border-radius: 4px;
-      margin-bottom: 20px;
+    #barraAlerta.expandida #contenidoAlerta{ display:flex; }
+
+    /* Columna de texto */
+    #infoAlerta{ flex:1 1 260px; font-size:.93rem; line-height:1.35; }
+
+    /* Video grabado */
+    #videoAlerta{
+      flex:0 0 320px;             /* ancho fijo en desktop */
+      max-width:100%;
+      border-radius:8px;
     }
-    .camara-info {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
+    @media (max-width:700px){     /* en móviles el video se apila debajo */
+      #videoAlerta{ flex:1 1 100%; }
     }
-    .camara-info h2 {
-      margin-top: 0;
-      color: #4285f4;
-    }
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-top: 15px;
-    }
-    .info-item {
-      margin-bottom: 10px;
-    }
-    .info-label {
-      font-weight: bold;
-      color: #555;
-    }
-    .info-value {
-      color: #333;
-    }
-    .mapa {
-      height: 200px;
-      background: #eee;
-      border-radius: 8px;
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-    }
-    .loading {
-      text-align: center;
-      color: #666;
-      font-style: italic;
-    }
+
+    .etq{ font-weight:600; }
   </style>
 </head>
 <body>
-  <h1>Monitoreo de Cámaras de Seguridad</h1>
 
-  <div id="status">
-    <p class="loading">Obteniendo estado de la cámara...</p>
+  <!-- =======  Texto de estado  ======= -->
+  <div id="estadoTexto">Determinando cámaras cercanas…</div>
+
+  <!-- =======  Stream en vivo  ======= -->
+  <div id="videoCamara">
+    <img id="streamCamara" alt="Stream de cámara"/>
   </div>
 
-  <div id="zonaPrivada" style="display: none;">
-    <div id="camaraInfo" class="camara-info">
-      <h2 id="camaraNombre">Cámara de Seguridad</h2>
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">Estado:</div>
-          <div class="info-value" id="camaraEstado">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Ubicación:</div>
-          <div class="info-value" id="camaraUbicacion">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Mensaje:</div>
-          <div class="info-value" id="camaraMensaje">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Última actualización:</div>
-          <div class="info-value" id="camaraFecha">-</div>
-        </div>
+  <!-- =======  Barra de alerta (compacta/expandida)  ======= -->
+  <div id="barraAlerta">
+    ⚠️ Alerta detectada — haz clic para ver/ocultar detalles
+    <div id="contenidoAlerta">
+      <!-- Columna texto -->
+      <div id="infoAlerta">
+        <p><span class="etq">Cámara:</span> <span id="txtCamara">-</span></p>
+        <p><span class="etq">Alerta:</span> <span id="txtAlerta">-</span></p>
+        <p><span class="etq">Mensaje:</span> <span id="txtMensaje">-</span></p>
+        <p><span class="etq">Descripción:</span> <span id="txtDescripcion">-</span></p>
+        <p><span class="etq">Fecha:</span> <span id="txtFecha">-</span></p>
+        <p><span class="etq">Ubicación:</span> <span id="txtUbicacion">-</span></p>
       </div>
-      <div class="mapa" id="mapa">
-        Mapa de ubicación (podrías integrar Google Maps aquí)
-      </div>
-    </div>
 
-    <button id="btnCamara" style="display: none;">Mostrar transmisión en vivo</button>
-
-    <div id="camaraContenedor">
-      <img id="camaraStream" src="" alt="Transmisión en vivo" />
+      <!-- Video -->
+      <video id="videoAlerta" controls>
+        <source id="srcVideoAlerta" src="" type="video/mp4">
+      </video>
     </div>
   </div>
 
-  <script>
-    const zonaPrivada = document.getElementById("zonaPrivada");
-    const statusDiv = document.getElementById("status");
-    const btnCamara = document.getElementById("btnCamara");
-    const contenedor = document.getElementById("camaraContenedor");
-    const camaraStream = document.getElementById("camaraStream");
-    const camaraInfoDiv = document.getElementById("camaraInfo");
+<!-- ===========  LÓGICA JAVASCRIPT  =========== -->
+<script>
+  /* ---------- Referencias DOM ---------- */
+  const estadoTexto  = document.getElementById("estadoTexto");
+  const videoCamara  = document.getElementById("videoCamara");
+  const streamCamara = document.getElementById("streamCamara");
 
-    const camaraNombre = document.getElementById("camaraNombre");
-    const camaraEstado = document.getElementById("camaraEstado");
-    const camaraUbicacion = document.getElementById("camaraUbicacion");
-    const camaraMensaje = document.getElementById("camaraMensaje");
-    const camaraFecha = document.getElementById("camaraFecha");
+  const barraAlerta  = document.getElementById("barraAlerta");
+  const txtCamara    = document.getElementById("txtCamara");
+  const txtAlerta    = document.getElementById("txtAlerta");
+  const txtMensaje   = document.getElementById("txtMensaje");
+  const txtDescripcion = document.getElementById("txtDescripcion");
+  const txtFecha     = document.getElementById("txtFecha");
+  const txtUbicacion = document.getElementById("txtUbicacion");
+  const srcVideoAlerta = document.getElementById("srcVideoAlerta");
+  const videoAlerta  = document.getElementById("videoAlerta");
 
-    let camaraVisible = false;
-    let STREAM_URL = "";
+  let STREAM_URL = "";   // se llenará al primer uso
 
-    const socket = io("http://localhost:8000");
-
-    function formatDate(isoString) {
-      if (!isoString) return "-";
-      const date = new Date(isoString);
-      return date.toLocaleString();
+  /* ---------- Obtener URL pública del stream ---------- */
+  async function obtenerUrlStream(){
+    try{
+      const r = await fetch("http://localhost:5000/get_ngrok_url");
+      const j = await r.json();
+      if(j.status==="success"){ STREAM_URL=j.ngrok_url; return true; }
+      throw new Error(j.message||"Sin éxito");
+    }catch(e){
+      console.error("URL stream:",e.message);
+      return false;
     }
+  }
 
-    function updateCamaraInfo(data) {
-      if (!data) return;
-      
-      camaraNombre.textContent = data.nombre_camara || "Cámara de Seguridad";
-      camaraEstado.textContent = data.alerta || "Operativa";
-      camaraEstado.style.color = data.alerta === "Inactiva" ? "#f44336" : "#4caf50";
+  /* ---------- Socket.IO ---------- */
+  const socket = io();  // mismo host
 
-      if (data.ubicacion) {
-        camaraUbicacion.textContent = `${data.ubicacion.lat.toFixed(4)}, ${data.ubicacion.lon.toFixed(4)}`;
-      } else {
-        camaraUbicacion.textContent = "-";
-      }
+  socket.on("connect",()=>{
+    navigator.geolocation.getCurrentPosition(
+      pos=>socket.emit("registrar",{lat:pos.coords.latitude,lon:pos.coords.longitude}),
+      ()=>socket.emit("registrar",{lat:-0.0626,lon:-78.4516})
+    );
+  });
 
-      if (data.informacion_extra?.mensaje) {
-        camaraMensaje.textContent = data.informacion_extra.mensaje;
-      } else {
-        camaraMensaje.textContent = "-";
-      }
+  /* ---- Evento con status (y posible detalle) ---- */
+  socket.on("evento", async data=>{
+    if(!data) return;
 
-      camaraFecha.textContent = formatDate(data.fecha);
-    }
-
-    function mostrarZonaPrivada() {
-      zonaPrivada.style.display = "block";
-      camaraInfoDiv.style.display = "block";
-    }
-
-    function ocultarZonaPrivada() {
-      zonaPrivada.style.display = "none";
-      btnCamara.style.display = "none";
-      contenedor.style.display = "none";
-      camaraVisible = false;
-      camaraStream.src = "";
-    }
-
-    async function obtenerUrlStream() {
-      try {
-        const response = await fetch('http://localhost:5000/get_ngrok_url');
-        const data = await response.json();
-
-        if (data.status === "success") {
-          STREAM_URL = data.ngrok_url;
-          console.log("URL del stream obtenida:", STREAM_URL);
-          return true;
-        } else {
-          throw new Error(data.message || "Error desconocido");
+    /* STATUS */
+    if(data.status){
+      if(data.status.includes("Camara operativa")){
+        estadoTexto.textContent = "Cámara activa operativa";
+        if(!STREAM_URL){
+          const ok = await obtenerUrlStream();
+          if(ok){
+            streamCamara.src = STREAM_URL;
+            videoCamara.style.display = "block";
+          }
+        }else{
+          videoCamara.style.display = "block";
         }
-      } catch (error) {
-        console.error("Error al obtener URL:", error);
-        statusDiv.innerHTML = `
-          <div class="alert-error">
-            Error al conectar con la cámara: ${error.message}
-          </div>`;
-        return false;
+      }else{
+        estadoTexto.textContent = data.status;
+        videoCamara.style.display = "none";
       }
     }
 
-    btnCamara.addEventListener("click", async () => {
-      if (!camaraVisible) {
-        const success = await obtenerUrlStream();
-        if (success) {
-          camaraStream.src = STREAM_URL;
-          contenedor.style.display = "block";
-          btnCamara.textContent = "Ocultar transmisión";
-          camaraVisible = true;
-        }
-      } else {
-        camaraStream.src = "";
-        contenedor.style.display = "none";
-        btnCamara.textContent = "Mostrar transmisión";
-        camaraVisible = false;
-      }
-    });
+    /* DETALLE DE ALERTA */
+    if(data.detalle) mostrarAlerta(data.detalle);
+  });
 
-    async function checkEstadoInicial() {
-      try {
-        const resp = await fetch("http://localhost:8000/api/estado", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({})
-        });
+  /* ---- Evento con detalle actualizado ---- */
+  socket.on("actualizar_camara", data=>{
+    if(data) mostrarAlerta(data);
+  });
 
-        // Verificar si la respuesta es JSON
-        const contentType = resp.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("El servidor no devolvió JSON");
-        }
+  /* ---------- Mostrar / rellenar barra de alerta ---------- */
+  function mostrarAlerta(det){
+    if(!det.alerta || det.alerta==="Todo en orden") return;
 
-        const json = await resp.json();
-        
-        if (json.status) {
-          statusDiv.innerHTML = "<p class='loading'>Cámara operativa. Esperando ubicación...</p>";
-          mostrarZonaPrivada();
-        } else {
-          statusDiv.innerHTML = "<div class='alert-error'>No hay conexión con la cámara</div>";
-          ocultarZonaPrivada();
-        }
-      } catch (error) {
-        console.error("Error completo:", error);
-        statusDiv.innerHTML = `
-          <div class="alert-error">
-            Error consultando estado: ${error.message}<br>
-            <small>Verifica la consola para más detalles</small>
-          </div>`;
-        ocultarZonaPrivada();
-      }
+    txtCamara.textContent  = det.nombre_camara || "-";
+    txtAlerta.textContent  = det.alerta;
+    txtMensaje.textContent = det.informacion_extra?.mensaje || "-";
+    txtDescripcion.textContent = det.informacion_extra?.Descripcion || "-";
+    txtFecha.textContent   = new Date(det.fecha).toLocaleString();
+    txtUbicacion.textContent = det.ubicacion
+      ? `${det.ubicacion.lat.toFixed(4)}, ${det.ubicacion.lon.toFixed(4)}`
+      : "-";
+
+    if(det.informacion_extra?.url_video){
+      srcVideoAlerta.src = det.informacion_extra.url_video;
+      videoAlerta.load();
+      videoAlerta.style.display="block";
+    }else{
+      srcVideoAlerta.src="";
+      videoAlerta.load();
+      videoAlerta.style.display="none";
     }
 
-    checkEstadoInicial();
+    barraAlerta.style.display="block";
+    barraAlerta.classList.remove("expandida");  // inicia compacta
+  }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const userLocation = {
-            lat: pos.coords.latitude,
-            lon: pos.coords.longitude,
-          };
-          socket.emit("registrar", userLocation);
-          statusDiv.innerHTML = "<p class='loading'>Ubicación registrada. Monitoreando cámaras cercanas...</p>";
-        },
-        (error) => {
-          statusDiv.innerHTML = `<div class="alert-error">Error de geolocalización: ${error.message}</div>`;
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    } else {
-      statusDiv.innerHTML = `<div class="alert-error">Tu navegador no soporta geolocalización</div>`;
-    }
-
-    socket.on("evento", (data) => {
-      console.log("Evento recibido:", JSON.stringify(data, null, 2));
-      
-      if (data.detalle) {
-        updateCamaraInfo(data.detalle);
-        mostrarZonaPrivada();
-      }
-
-      if (data.cercano && data.status) {
-        statusDiv.innerHTML = `
-          <div class="alert-success">
-            <strong>🚨 Cámara cercana detectada</strong><br>
-            Estado: ${data.status}
-          </div>`;
-        btnCamara.style.display = "inline-block";
-      } else {
-        statusDiv.innerHTML = `
-          <div style="padding:15px; border:1px solid #ccc; background:#f5f5f5; border-radius:4px;">
-            Monitoreando cámara (no estás en zona de alerta)
-          </div>`;
-      }
-    });
-
-    socket.on("actualizar_camara", (data) => {
-      console.log("Cámara actualizada:", data);
-      updateCamaraInfo(data);
-      btnCamara.style.display = data.alerta !== "Inactiva" ? "inline-block" : "none";
-    });
-  </script>
+  /* Expandir / colapsar */
+  barraAlerta.addEventListener("click",()=>{
+    barraAlerta.classList.toggle("expandida");
+  });
+</script>
 </body>
 </html>
