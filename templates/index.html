@@ -7,20 +7,33 @@
 
   <!-- ===========  ESTILOS  =========== -->
   <style>
+    /* ---------- Variables de color ---------- */
+    :root {
+      --primary: #6A0DAD;
+      --secondary: #4B0082;
+      --background-light: #F5F6FA;
+      --success: #38C172;
+      --danger: #E3342F;
+      --text-primary: #2D3748;
+      --text-secondary: #718096;
+    }
+
     /* ---------- Layout general ---------- */
     body{
       font-family:Arial,Helvetica,sans-serif;
       margin:0; padding:0;
-      background:#fafafa;
+      background: var(--background-light);
       display:flex; flex-direction:column;
       min-height:100vh;
+      color: var(--text-primary);
     }
 
     /* ---------- Texto de estado ---------- */
     #estadoTexto{
       padding:20px; text-align:center;
       font-size:1.4rem;
-      background:#333; color:#fff;
+      background: var(--primary); color:#fff;
+      box-shadow: 0 2px 8px rgba(106, 13, 173, 0.3);
     }
 
     /* ---------- Stream de cámara ---------- */
@@ -32,17 +45,18 @@
     #videoCamara img{
       width:100%;
       border-radius:8px;
-      box-shadow:0 0 10px rgba(0,0,0,.3);
+      box-shadow:0 4px 12px rgba(106, 13, 173, 0.2);
+      border: 2px solid var(--primary);
     }
 
     /* ---------- BARRA DE ALERTA FIJA ABAJO ---------- */
     #barraAlerta{
       position:fixed; left:0; right:0; bottom:0;
-      background:#b00020; color:#fff;
+      background: var(--danger); color:#fff;
       padding:14px 18px;
       font-weight:bold; font-size:1.05rem;
       cursor:pointer; user-select:none;
-      box-shadow:0 -2px 8px rgba(0,0,0,.4);
+      box-shadow:0 -4px 12px rgba(227, 52, 47, 0.4);
 
       transition:max-height .3s ease, padding-bottom .3s ease;
       overflow:hidden;
@@ -68,19 +82,28 @@
     #barraAlerta.expandida #contenidoAlerta{ display:flex; }
 
     /* Columna de texto */
-    #infoAlerta{ flex:1 1 260px; font-size:.93rem; line-height:1.35; }
+    #infoAlerta{ 
+      flex:1 1 260px; 
+      font-size:.93rem; 
+      line-height:1.35; 
+      color: #fff;
+    }
 
     /* Video grabado */
     #videoAlerta{
       flex:0 0 320px;             /* ancho fijo en desktop */
       max-width:100%;
       border-radius:8px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
     }
     @media (max-width:700px){     /* en móviles el video se apila debajo */
       #videoAlerta{ flex:1 1 100%; }
     }
 
-    .etq{ font-weight:600; }
+    .etq{ 
+      font-weight:600; 
+      color: rgba(255, 255, 255, 0.9);
+    }
   </style>
 </head>
 <body>

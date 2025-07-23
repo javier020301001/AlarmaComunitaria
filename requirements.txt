@@ -1,0 +1,13 @@
+flask
+flask-cors
+flask-socketio
+opencv-python
+requests
+ultralytics
+transformers
+google-generativeai
+b2sdk
+pyngrok
+numpy
+Pillow
+pywt 
