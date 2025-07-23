@@ -41,7 +41,7 @@ class SecuritySystem:
             self.net = None
 
         try:
-            self.yolo_model = YOLO('yolov8n.pt')
+            self.yolo_model = YOLO('yolov8s.pt')
         except Exception as e:
             print(f"Error al cargar YOLOv8: {e}")
             self.yolo_model = None
