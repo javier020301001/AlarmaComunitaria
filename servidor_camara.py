@@ -2,7 +2,7 @@ import threading
 from flask import Flask, Response, jsonify
 from flask_cors import CORS
 #Importacion de otras clases
-from camara import SecuritySystem
+from camara.camara import SecuritySystem
 from ngrok_url_camara import ngrokurl
 
 app = Flask(__name__)
