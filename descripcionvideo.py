@@ -12,11 +12,9 @@ url_video = obtener_url_desde_archivo()
 VIDEO = url_video
 FPS_TARGET = 1.0                 
 # Cargar modelo BLIP
-print("Cargando modelo BLIP.")
-processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-model = BlipForConditionalGeneration.from_pretrained(
-    "Salesforce/blip-image-captioning-base", torch_dtype=torch.float32
-).to("cpu")
+print("Cargando modelo BLIP (Salesforce/blip-image-captioning-large).")
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cpu")
 
 # Extraccion de frames
 def extract_frames(path: str, fps_target: float):
