@@ -1,0 +1,189 @@
+body, :host {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-light);
+}
+.login-root, .login-main, .login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+}
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.login-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.08);
+  margin-bottom: 0.7rem;
+}
+.login-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--primary);
+  font-size: 28px;
+  font-weight: 700;
+}
+.login-subtitle {
+  font-size: 1.08rem;
+  color: #b0b0b0;
+  font-weight: 400;
+  margin-top: 0.2rem;
+  letter-spacing: 0.5px;
+  font-family: 'Inter', 'Poppins', 'Montserrat', 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+}
+
+.is-invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(227, 52, 47, 0.1);
+}
+
+.error-message {
+  color: var(--danger);
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.error-message span {
+  display: block;
+}
+
+.alert {
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.alert-danger {
+  background-color: rgba(227, 52, 47, 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.submit-button {
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.3);
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(106, 13, 173, 0.4);
+}
+
+.submit-button:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.forgot-password a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: var(--secondary);
+  text-decoration: underline;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.register-link a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.register-link a:hover {
+  color: var(--secondary);
+  text-decoration: underline;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border: 1px solid rgba(106, 13, 173, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(106, 13, 173, 0.15);
+  background-color: white;
+}

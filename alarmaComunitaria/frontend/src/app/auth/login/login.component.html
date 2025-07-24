@@ -1,0 +1,57 @@
+<div class="login-container" style="background: var(--white); color: var(--text-primary); border-radius: 18px; box-shadow: 0 4px 32px rgba(106,13,173,0.10); padding: 2.5rem 2rem; max-width: 400px; margin: 2.5rem auto;">
+  <img src="assets/images/logo_full.png" alt="Logo" style="display:block; margin:0 auto 1.5rem auto; width:120px;">
+  <h2 class="login-title" style="color: var(--primary); text-align:center; font-weight: 800; letter-spacing: 1px;">Iniciar Sesión</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <!-- Campo Email -->
+    <div class="form-group">
+      <label for="email" style="color: var(--text-secondary); font-weight: 600;">Correo Electrónico</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        placeholder="tu@email.com"
+        style="background: var(--background-light); color: var(--text-primary); border: 1.5px solid var(--secondary); border-radius: 8px; padding: 0.7rem; margin-top: 0.2rem; width: 100%; font-size: 1rem;"
+        [ngClass]="{ 'is-invalid': loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched) }">
+      <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)"
+           class="error-message" style="color: var(--danger); font-size: 0.95rem; margin-top: 0.2rem;">
+        <span *ngIf="loginForm.get('email')?.errors?.['required']">El email es requerido</span>
+        <span *ngIf="loginForm.get('email')?.errors?.['email']">Ingresa un email válido</span>
+      </div>
+    </div>
+    <!-- Campo Contraseña -->
+    <div class="form-group">
+      <label for="password" style="color: var(--text-secondary); font-weight: 600;">Contraseña</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        placeholder="••••••••"
+        style="background: var(--background-light); color: var(--text-primary); border: 1.5px solid var(--secondary); border-radius: 8px; padding: 0.7rem; margin-top: 0.2rem; width: 100%; font-size: 1rem;"
+        [ngClass]="{ 'is-invalid': loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched) }">
+      <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)"
+           class="error-message" style="color: var(--danger); font-size: 0.95rem; margin-top: 0.2rem;">
+        <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es requerida</span>
+      </div>
+    </div>
+    <!-- Botón de Submit -->
+    <button
+      type="submit"
+      class="submit-button"
+      [disabled]="loginForm.invalid"
+      style="width: 100%; margin-top: 1.2rem; background: linear-gradient(90deg, var(--primary), var(--secondary)); color: var(--white); border: none; border-radius: 8px; padding: 0.9rem 0; font-size: 1.1rem; font-weight: 700; box-shadow: 0 2px 8px rgba(106,13,173,0.10); cursor: pointer; transition: background 0.3s;">
+      Ingresar
+    </button>
+    <!-- Enlace para recuperar contraseña -->
+    <div class="forgot-password" style="margin-top: 1rem; text-align: right;">
+      <a routerLink="/forgot-password" style="color: var(--secondary); text-decoration: underline; font-size: 0.98rem;">¿Olvidaste tu contraseña?</a>
+    </div>
+  </form>
+  <!-- Mensaje de error general -->
+  <div *ngIf="errorMessage" class="alert alert-danger" style="background: var(--danger); color: var(--white); border-radius: 8px; margin-top: 1rem; padding: 0.7rem 1rem; text-align: center;">
+    {{ errorMessage }}
+  </div>
+  <!-- Opción de registro -->
+  <div class="register-link" style="margin-top: 1.5rem; text-align: center; color: var(--text-secondary);">
+    ¿No tienes una cuenta? <a routerLink="/register" style="color: var(--primary); font-weight: 700;">Regístrate</a>
+  </div>
+</div>
