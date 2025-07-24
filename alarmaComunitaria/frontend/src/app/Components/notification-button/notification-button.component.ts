@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -13,6 +13,10 @@ import { NotificationPayload } from '../../Share/interface/notification.interfac
   styleUrls: ['./notification-button.component.scss']
 })
 export class NotificationButtonComponent implements OnInit, OnDestroy {
+  @Output() openAlertForm = new EventEmitter<void>();
+  @Input() isModal = false;
+  @Output() closeModal = new EventEmitter<void>();
+  @Input() showBadge: boolean = true;
   unreadCount = 0;
   isConnected = false;
   isSending = false;
@@ -53,7 +57,12 @@ export class NotificationButtonComponent implements OnInit, OnDestroy {
 
   // Mostrar/ocultar formulario
   toggleForm(): void {
-    this.showForm = !this.showForm;
+    if (this.isModal) {
+      this.closeModal.emit();
+    } else {
+      this.openAlertForm.emit();
+      this.showForm = !this.showForm;
+    }
     if (this.showForm) {
       this.resetForm();
     }

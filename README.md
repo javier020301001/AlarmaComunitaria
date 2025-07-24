@@ -145,7 +145,10 @@ http://localhost:4200
 ```
 
 ### 6️. Accede a la cámara
+```
 http://localhost:5001
+```
+
 ---
 
 ### 7️. Prueba el sistema: alertas automáticas y manuales
@@ -208,29 +211,27 @@ AlarmaComunitaria-main/
 │   │   │   └── servidorsonido.py     # Activa la alarma en dispositivos
 │   │   └── requirements.txt          # Dependencias Python
 │   │
-│   ├── frontend/                     # Frontend: Angular
-│   │   ├── src/
-│   │   │   ├── app/
-│   │   │   │   ├── Components/       # Componentes principales de la UI
-│   │   │   │   │   ├── Inicio/       # Dashboard principal
-│   │   │   │   │   ├── mapa/         # Mapa interactivo
-│   │   │   │   │   ├── alertas/      # Listado de alertas
-│   │   │   │   │   ├── alert-popup/  # Popup de alertas
-│   │   │   │   │   ├── notification-button/ # Botón para enviar alertas
-│   │   │   │   │   ├── notifications-panel/ # Panel de notificaciones
-│   │   │   │   │   └── ...           # Otros componentes
-│   │   │   │   ├── auth/             # Autenticación (login, registro, guards)
-│   │   │   │   ├── services/         # Servicios Angular (API, WebSocket, etc.)
-│   │   │   │   ├── Share/            # Interfaces y validadores compartidos
-│   │   │   │   └── ...               # Configuración y archivos raíz
-│   │   │   ├── assets/               # Imágenes y recursos estáticos
-│   │   │   └── styles.scss           # Estilos globales
-│   │   ├── angular.json              # Configuración Angular
-│   │   ├── package.json              # Dependencias frontend
-│   │   └── ...                       # Otros archivos de configuración
-│   ├── src/                          # (Copia de seguridad o legacy)
-│   └── ...                           # Otros archivos raíz
-│
+│   └──frontend/                     # Frontend: Angular
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── Components/       # Componentes principales de la UI
+│       │   │   │   ├── Inicio/       # Dashboard principal
+│       │   │   │   ├── mapa/         # Mapa interactivo
+│       │   │   │   ├── alertas/      # Listado de alertas
+│       │   │   │   ├── alert-popup/  # Popup de alertas
+│       │   │   │   ├── notification-button/ # Botón para enviar alertas
+│       │   │   │   ├── notifications-panel/ # Panel de notificaciones
+│       │   │   │   └── ...           # Otros componentes
+│       │   │   ├── auth/             # Autenticación (login, registro, guards)
+│       │   │   ├── services/         # Servicios Angular (API, WebSocket, etc.)
+│       │   │   ├── Share/            # Interfaces y validadores compartidos
+│       │   │   └── ...               # Configuración y archivos raíz
+│       │   ├── assets/               # Imágenes y recursos estáticos
+│       │   └── styles.scss           # Estilos globales
+│       ├── angular.json              # Configuración Angular
+│       ├── package.json              # Dependencias frontend
+│       └── ...                       # Otros archivos de configuración
+│   
 ├── README.md                         # Documentación principal
 ├── README_android.md                 # Instrucciones para Android
 └── ultima_url.txt                    # Última URL de video subido

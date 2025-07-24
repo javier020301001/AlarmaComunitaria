@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
 import { MapaComponent } from '../mapa/mapa.component';
 import { AlertasComponent } from '../alertas/alertas.component';
@@ -17,6 +18,7 @@ import { HttpClient } from '@angular/common/http';
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule, // <-- Habilita ngModel y ngForm
     MapaComponent,
     AlertasComponent,
     NotificationButtonComponent,
@@ -32,6 +34,69 @@ export class DashboardComponent implements OnInit {
   private panicPulseTimeout: any = null;
   showCameraStream = false;
   cameraStreamUrl = 'http://127.0.0.1:5001/'; // Ajusta si tu stream está en otro puerto o ruta
+  showAlertForm = false;
+
+  // Modelo del formulario de alerta
+  notificationForm = {
+    alertType: 'emergencia',
+    title: '',
+    message: '',
+    location: '',
+    imageUrl: ''
+  };
+  isSending = false;
+
+  isFormValid() {
+    return (
+      this.notificationForm.title.trim() !== '' &&
+      this.notificationForm.message.trim() !== '' &&
+      this.notificationForm.location.trim() !== ''
+    );
+  }
+
+  getAlertTypeClass() {
+    switch (this.notificationForm.alertType) {
+      case 'emergencia': return 'alert-emergencia';
+      case 'robo': return 'alert-robo';
+      case 'seguridad': return 'alert-seguridad';
+      case 'general': return 'alert-general';
+      default: return '';
+    }
+  }
+
+  getAlertTypeIcon() {
+    switch (this.notificationForm.alertType) {
+      case 'emergencia': return '🚨';
+      case 'robo': return '💰';
+      case 'seguridad': return '🛡️';
+      case 'general': return '📢';
+      default: return '📢';
+    }
+  }
+
+  sendNotification() {
+    if (!this.isFormValid()) return;
+    this.isSending = true;
+    this.notificationService.sendNotification(this.notificationForm).subscribe({
+      next: () => {
+        this.isSending = false;
+        this.showAlertForm = false;
+        // Limpia el formulario
+        this.notificationForm = {
+          alertType: 'emergencia',
+          title: '',
+          message: '',
+          location: '',
+          imageUrl: ''
+        };
+        // alert('¡Alerta enviada!'); // Eliminado para no mostrar el mensaje nativo
+      },
+      error: () => {
+        this.isSending = false;
+        alert('Error al enviar la alerta');
+      }
+    });
+  }
 
   constructor(
     private storageService: StorageService,
@@ -53,18 +118,20 @@ export class DashboardComponent implements OnInit {
       this.notificationService.newNotification$.subscribe(notification => {
         if (notification) {
           // Si la notificación viene de la cámara, mostrar el stream
-          if (notification.sender && notification.sender.userId === 'camara-auto') {
-            this.showCameraStream = true;
-            this.disableRecording(); // Deshabilitar grabación
-            // Opcional: Ocultar el stream después de cierto tiempo
-            setTimeout(() => {
-              this.showCameraStream = false;
-              this.enableRecording(); // Habilitar grabación
-            }, 20000); // 20 segundos
-          }
+          this.showCameraStream = true;
+          this.disableRecording(); // Deshabilitar grabación
+          // Opcional: Ocultar el stream después de cierto tiempo
+          setTimeout(() => {
+            this.showCameraStream = false;
+            this.enableRecording(); // Habilitar grabación
+          }, 20000); // 20 segundos
         }
       });
     }
+  }
+
+  onSendAlertClick() {
+    this.showAlertForm = true;
   }
 
   // Método para deshabilitar la grabación de video
@@ -116,6 +183,7 @@ export class DashboardComponent implements OnInit {
     }
     this.panicPulseTimeout = setTimeout(() => {
       this.isPanicPulsing = false;
-    }, 10000); // 10 segundos
+    }, 16000); // 16 segundos
   }
 }
+
