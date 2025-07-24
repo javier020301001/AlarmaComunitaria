@@ -16,17 +16,12 @@ export class AuthService {
   ) {}
 
   login(credentials: any): Observable<any> {
-    console.log('AuthService: Making login request to:', `${API_URL}/login`);
-    console.log('AuthService: Credentials:', credentials);
     return this.http.post(`${API_URL}/login`, credentials).pipe(
       tap((response: any) => {
         if (response.success && response.token) {
           // Guardar token JWT
           this.storageService.setItem('auth_token', response.token);
           this.storageService.setItem('user', JSON.stringify(response.user));
-          console.log('AuthService: Token saved:', response.token);
-
-          // El WebSocket se conectará automáticamente cuando se necesite
         }
       })
     );
@@ -59,7 +54,6 @@ export class AuthService {
   isAuthenticated(): boolean {
     // Verificar si hay token en localStorage
     const token = this.storageService.getItem('auth_token');
-    console.log('AuthService: Checking token:', token);
     return !!token;
   }
 

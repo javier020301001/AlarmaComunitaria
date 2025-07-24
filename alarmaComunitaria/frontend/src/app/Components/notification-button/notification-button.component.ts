@@ -96,11 +96,6 @@ export class NotificationButtonComponent implements OnInit, OnDestroy {
               this.notificationForm.location?.trim());
   }
 
-  // Getter para validación del formulario
-  get formIsValid(): boolean {
-    return this.isFormValid();
-  }
-
   // Resetear formulario
   private resetForm(): void {
     this.notificationForm = {

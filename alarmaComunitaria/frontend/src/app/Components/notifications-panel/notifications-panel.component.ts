@@ -14,7 +14,6 @@ import { Notification } from '../../Share/interface/notification.interface';
 })
 export class NotificationsPanelComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];
-  filteredNotifications: Notification[] = [];
   isVisible = false;
   isLoading = false;
   selectedFilter = 'all';
@@ -39,7 +38,6 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.notificationService.notifications$.subscribe(notifications => {
         this.notifications = notifications;
-        this.applyFilters();
       })
     );
 
@@ -89,39 +87,6 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     if (confirm('¿Estás seguro de que quieres eliminar todas las notificaciones?')) {
       this.notificationService.clearAll();
     }
-  }
-
-  onFilterChange(): void {
-    this.applyFilters();
-  }
-
-  onSearchChange(): void {
-    this.applyFilters();
-  }
-
-  private applyFilters(): void {
-    let filtered = [...this.notifications];
-
-    // Aplicar filtro por tipo
-    if (this.selectedFilter !== 'all') {
-      if (this.selectedFilter === 'unread') {
-        filtered = filtered.filter(n => !n.isRead);
-      } else {
-        filtered = filtered.filter(n => n.metadata?.alertType === this.selectedFilter);
-      }
-    }
-
-    // Aplicar búsqueda
-    if (this.searchTerm.trim()) {
-      const search = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(n =>
-        n.title.toLowerCase().includes(search) ||
-        n.message.toLowerCase().includes(search) ||
-        n.metadata?.location?.toLowerCase().includes(search)
-      );
-    }
-
-    this.filteredNotifications = filtered;
   }
 
   getAlertTypeIcon(alertType?: string): string {

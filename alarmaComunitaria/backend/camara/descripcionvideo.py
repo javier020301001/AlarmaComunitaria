@@ -3,7 +3,7 @@ import cv2
 from PIL import Image
 from transformers import BlipProcessor, BlipForConditionalGeneration
 import google.generativeai as genai
-import requests
+import requests 
 
 # Ruta donde guardar los videos
 VIDEO_DIR = "videos"

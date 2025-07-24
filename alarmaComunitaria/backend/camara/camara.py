@@ -10,6 +10,7 @@ from b2sdk.v2 import InMemoryAccountInfo, B2Api
 import numpy as np
 import atexit
 import json
+import glob
 
 class DetectionSystem:
     def __init__(self):
@@ -57,9 +58,29 @@ class DetectionSystem:
 
     # Carga los modelos de detección de armas y personas
     def load_models(self): 
-        self.model_armas = YOLO('C:/Users/JAVIER/Downloads/AlarmaComunitariaCompleto/alarmaComunitaria/backend/camara/modelos/detect/Normal_Compressed/weights/best.pt')
-        self.model_personas = YOLO('C:/Users/JAVIER/Downloads/AlarmaComunitariaCompleto/alarmaComunitaria/backend/camara/modelos/modelos/yolov8n.pt')
-        print("Modelos cargados correctamente.")
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        modelos_dir = os.path.join(base_dir, 'modelos')
+        # Buscar modelo de armas (Normal_Compressed/weights/best.pt)
+        armas_pattern = os.path.join(modelos_dir, 'detect', 'Normal_Compressed', 'weights', 'best.pt')
+        armas_files = glob.glob(armas_pattern)
+        if armas_files:
+            armas_path = armas_files[0]
+        else:
+            raise FileNotFoundError(f"No se encontró el modelo de armas en {armas_pattern}")
+        # Buscar modelo de personas (yolov8n.pt en modelos o en detect/modelos)
+        personas_pattern = os.path.join(modelos_dir, 'yolov8n.pt')
+        personas_files = glob.glob(personas_pattern)
+        if not personas_files:
+            # Buscar en detect/modelos
+            personas_pattern_alt = os.path.join(modelos_dir, 'detect', 'modelos', 'yolov8n.pt')
+            personas_files = glob.glob(personas_pattern_alt)
+        if personas_files:
+            personas_path = personas_files[0]
+        else:
+            raise FileNotFoundError(f"No se encontró el modelo de personas en {personas_pattern} ni {personas_pattern_alt}")
+        self.model_armas = YOLO(armas_path)
+        self.model_personas = YOLO(personas_path)
+        print(f"Modelos cargados correctamente:\n  Armas: {armas_path}\n  Personas: {personas_path}")
 
     # Inicializa la cámara web
     def setup_camera(self):

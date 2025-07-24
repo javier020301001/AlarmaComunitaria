@@ -28,7 +28,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DashboardComponent implements OnInit {
   userInfo: any = null;
-  isConnected = false;
   isPanicPulsing = false;
   private panicPulseTimeout: any = null;
   showCameraStream = false;
@@ -50,11 +49,6 @@ export class DashboardComponent implements OnInit {
 
     // Inicializar sistema de notificaciones solo en el navegador
     if (isPlatformBrowser(this.platformId)) {
-      // El WebSocket ya se conectó en el login
-      // Solo suscribirse al estado de conexión
-      this.notificationService.isConnected$.subscribe(
-        connected => this.isConnected = connected
-      );
       // Suscribirse a notificaciones en tiempo real
       this.notificationService.newNotification$.subscribe(notification => {
         if (notification) {

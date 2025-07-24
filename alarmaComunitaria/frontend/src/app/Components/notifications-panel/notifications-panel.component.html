@@ -28,7 +28,6 @@
       <div class="filters">
         <select
           [(ngModel)]="selectedFilter"
-          (change)="onFilterChange()"
           class="filter-select">
           <option
             *ngFor="let filter of filters"
@@ -43,7 +42,6 @@
         <input
           type="text"
           [(ngModel)]="searchTerm"
-          (input)="onSearchChange()"
           placeholder="Buscar notificaciones..."
           class="search-input">
       </div>
@@ -74,7 +72,7 @@
       </div>
 
       <!-- Sin notificaciones -->
-      <div class="empty-state" *ngIf="!isLoading && filteredNotifications.length === 0">
+      <div class="empty-state" *ngIf="!isLoading && notifications.length === 0">
         <span class="empty-icon">📭</span>
         <p>No hay notificaciones</p>
       </div>
@@ -82,7 +80,7 @@
       <!-- Notificaciones -->
       <div
         class="notification-item"
-        *ngFor="let notification of filteredNotifications"
+        *ngFor="let notification of notifications"
         [class.unread]="!notification.isRead"
         [class]="getAlertTypeClass(notification.metadata?.alertType)">
 

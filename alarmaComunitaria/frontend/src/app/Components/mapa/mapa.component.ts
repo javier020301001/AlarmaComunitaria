@@ -3,7 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AlertaMapService } from '../alertas/alerta-map.service';
 import { Alerta } from '../alertas/alertas.component';
-import { NotificationService } from '../../services/notification.service';
+// import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-mapa',
@@ -23,8 +23,8 @@ export class MapaComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private http: HttpClient,
-    private alertaMapService: AlertaMapService,
-    private notificationService: NotificationService
+    private alertaMapService: AlertaMapService
+    // private notificationService: NotificationService
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
@@ -41,16 +41,16 @@ export class MapaComponent implements OnInit, OnDestroy {
         }
       });
       // Suscribirse a nuevas notificaciones por WebSocket
-      this.notificationService.newNotification$.subscribe(notification => {
-        if (notification && notification.metadata?.lat && notification.metadata?.lng) {
-          this.centrarEnAlerta({
-            lat: notification.metadata.lat,
-            lng: notification.metadata.lng,
-            mensaje: notification.message,
-            raw: notification
-          });
-        }
-      });
+      // this.notificationService.newNotification$.subscribe(notification => {
+      //   if (notification && notification.metadata?.lat && notification.metadata?.lng) {
+      //     this.centrarEnAlerta({
+      //       lat: notification.metadata.lat,
+      //       lng: notification.metadata.lng,
+      //       mensaje: notification.message,
+      //       raw: notification
+      //     });
+      //   }
+      // });
     }
   }
 

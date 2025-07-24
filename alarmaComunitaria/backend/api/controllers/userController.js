@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// Cambiar import para soportar .ts
 const User = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_jwt_secret_super_seguro';

@@ -52,7 +52,6 @@ export class NotificationService {
     // Suscribirse a nuevas notificaciones del WebSocket
     this.webSocketService.notifications$.subscribe(
       notification => {
-        console.log('📥 Notificación recibida en el servicio:', notification);
         this.addNotification(notification);
       }
     );
@@ -116,31 +115,18 @@ export class NotificationService {
 
     // Agregar notificación a la lista
   private addNotification(notification: Notification): void {
-    console.log('➕ Agregando notificación a la lista:', notification.title);
-    console.log('🖥️ Notificación recibida (WebSocket o backend):', notification);
     // Mostrar la descripción generada por la cámara si existe
-    if (notification.metadata && (notification.metadata as any).Descripcion) {
-      console.log('📹 Descripción generada por la cámara:', (notification.metadata as any).Descripcion);
-    } else if ((notification as any).informacion_extra && (notification as any).informacion_extra.Descripcion) {
-      console.log('📹 Descripción generada por la cámara:', (notification as any).informacion_extra.Descripcion);
-    }
     const currentNotifications = this.notifications.value;
     const updatedNotifications = [notification, ...currentNotifications];
-
-    console.log(`📊 Total de notificaciones: ${updatedNotifications.length}`);
     this.notifications.next(updatedNotifications);
     this.updateUnreadCount();
     this.saveNotifications(updatedNotifications);
-
-        // Emitir la nueva notificación para alertas en tiempo real
+    // Emitir la nueva notificación para alertas en tiempo real
     this.newNotification.next(notification);
-
     // Limpiar después de 1 segundo para evitar duplicados
     setTimeout(() => {
       this.newNotification.next(null);
     }, 1000);
-
-    console.log('✅ Notificación agregada exitosamente');
   }
 
   // Marcar notificación como leída

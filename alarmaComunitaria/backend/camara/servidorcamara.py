@@ -1,15 +1,11 @@
-import threading
 import socket
 from flask import Flask, Response, jsonify
 from flask_cors import CORS
 from camara import DetectionSystem
 from pyngrok import ngrok
-import time
-import numpy as np
-import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+import threading
+import time
 
 # --- Configuración inicial ---
 app = Flask(__name__)

@@ -130,7 +130,7 @@
           type="submit"
           class="btn btn-primary"
           [class.loading]="isSending"
-          [disabled]="isSending || !formIsValid">
+          [disabled]="isSending || !isFormValid()">
           <span *ngIf="!isSending">
             {{ getAlertTypeIcon() }} Enviar Alerta
           </span>

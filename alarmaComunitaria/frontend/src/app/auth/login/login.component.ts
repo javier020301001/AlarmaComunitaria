@@ -32,9 +32,6 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    console.log('Form submitted:', this.loginForm.value);
-    console.log('Form valid:', this.loginForm.valid);
-
     if (this.loginForm.valid) {
       this.errorMessage = ''; // Limpiar mensajes de error previos
 
@@ -45,11 +42,8 @@ export class LoginComponent {
         submitButton.textContent = 'Iniciando sesión...';
       }
 
-      console.log('Calling auth service...');
       this.authService.login(this.loginForm.value).subscribe({
-                next: (response) => {
-          console.log('Login successful:', response);
-
+        next: (response) => {
           // El token JWT ya se guarda en el AuthService
           // Conectar WebSocket después del login exitoso
           this.notificationService.connectWebSocket();
@@ -58,7 +52,6 @@ export class LoginComponent {
           this.router.navigate(['/dashboard']);
         },
         error: (err: any) => {
-          console.error('Login failed', err);
           this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
 
           // Restaurar botón

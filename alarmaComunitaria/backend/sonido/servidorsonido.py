@@ -8,14 +8,14 @@ app = Flask(__name__)
 CORS(app)
 # Lista de dispositivos Android que simulan la alarma con Flask corriendo
 dispositivos = [
-    'http://172.20.10.5:5001/sonar'
+    'http://192.168.100.134:5005/sonar'
 ]
 
-@app.route('/activar_alarma', methods=['POST'])
+@app.route('/activar_alarma', methods=['POST','GET'])
 def activar_alarma():
     try:
         for url in dispositivos:
-            r = requests.get(url, timeout=5)
+            r = requests.get(url, timeout=15)
             r.raise_for_status()
         return jsonify({'status': 'ok', 'message': 'Alarma activada en todos los dispositivos'}), 200
     except requests.RequestException as e:

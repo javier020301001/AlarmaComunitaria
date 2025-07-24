@@ -23,7 +23,6 @@ export class AlertPopupComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.notificationService.newNotification$.subscribe(notification => {
         if (notification && !notification.isRead) {
-          console.log('🔔 AlertPopup: Mostrando alerta en tiempo real:', notification.title);
           this.showAlert(notification);
         }
       })
@@ -35,14 +34,10 @@ export class AlertPopupComponent implements OnInit, OnDestroy {
   }
 
   showAlert(notification: Notification): void {
-    console.log('🔔 AlertPopup: Mostrando alerta para:', notification.title);
     this.currentAlert = notification;
     this.isVisible = true;
-    console.log('🔔 AlertPopup: isVisible =', this.isVisible);
-
     // Auto-ocultar después de 8 segundos
     setTimeout(() => {
-      console.log('🔔 AlertPopup: Auto-ocultando alerta');
       this.hideAlert();
     }, 8000);
   }
