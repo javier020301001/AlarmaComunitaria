@@ -13,7 +13,7 @@ Kuntur nació como respuesta a la creciente inseguridad en Ecuador. Es una propu
 
 ## 📝 Requisitos
 
-- **Python 3.10 o superior**
+- **Python 3.9.x** (solo compatible con esta versión)
 - **Node.js (v14 o superior)** (para el frontend Angular)
 - **Cámara web conectada**
 - **Cuenta en Backblaze B2** (para almacenamiento en la nube)
@@ -33,13 +33,12 @@ Tienes dos opciones para obtener el código fuente:
 
 - **Opción A: Clonar el repositorio con git**
 
-  ```bash
+  ```bat
   git clone https://github.com/javier020301001/AlarmaComunitaria.git
   ```
 - **Opción B: Descargar el proyecto completo como archivo ZIP**
 
   Puedes descargar el proyecto completo como un archivo ZIP o cada archivo por separado.
-
 
 Descomprime el ZIP o navega a la carpeta clonada según la opción que elegiste.
 
@@ -47,12 +46,9 @@ Descomprime el ZIP o navega a la carpeta clonada según la opción que elegiste.
 
 ### 2️. (Opcional) Crea y activa un entorno virtual
 
-```bash
-python -m venv .venv
-# En Windows:
-.venv\Scripts\activate
-# En macOS/Linux:
-source .venv/bin/activate
+```bat
+py -3.9 -m venv venv
+venv\Scripts\activate
 ```
 
 ---
@@ -61,7 +57,7 @@ source .venv/bin/activate
 
 Primero, navega a la carpeta del backend de Python (cámara y sonido):
 
-```bash
+```bat
 cd alarmaComunitaria/backend
 pip install -r requirements.txt
 ```
@@ -74,7 +70,7 @@ Esto instalará todo lo necesario para la cámara y el servidor de sonido.
 
 Navega a la carpeta del backend de la API:
 
-```bash
+```bat
 cd alarmaComunitaria/backend/api
 npm install
 ```
@@ -87,7 +83,7 @@ Esto instalará todas las dependencias necesarias para el backend Node.js (API R
 
 Navega a la carpeta del frontend:
 
-```bash
+```bat
 cd alarmaComunitaria/frontend
 npm install
 ```
