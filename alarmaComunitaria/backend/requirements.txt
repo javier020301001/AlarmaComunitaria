@@ -1,13 +1,15 @@
-# Requisitos para backend/camara (detección de armas, video, etc)
-ultralytics==8.0.203
+b2sdk==1.30.0
+Flask
+Pillow==11.3.0
+google-generativeai==0.5.4
+matplotlib==3.8.2
+numpy==1.24.3
 opencv-contrib-python==4.8.0.76
 opencv-python==4.8.0.76
 opencv-python-headless==4.8.0.74
-numpy==1.24.3
-matplotlib==3.8.2
 pandas==2.1.4
-
-# Requisitos para backend/sonido (API Flask)
-Flask
+pyngrok==7.0.0
 requests
-flask-cors 
+flask-cors
+transformers==4.41.2
+ultralytics==8.0.203 
